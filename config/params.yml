@@ -1,0 +1,28 @@
+# config/params.yml
+
+# Input
+samplesheet: "config/samplesheet.csv"
+outdir: "results"
+
+# Tool toggles — set false to skip a tool
+run_amrfinder: true
+run_rgi: true
+run_abricate: true
+run_resfinder: true
+run_staramr: true
+run_fargene: true
+
+# Tool thresholds
+amrfinder_ident: 90
+amrfinder_cov: 50
+rgi_loose: false          # true = include loose hits
+abricate_db: "ncbi"       # ncbi, card, resfinder, argannot, megares
+abricate_minid: 80
+abricate_mincov: 80
+resfinder_threshold: 0.9
+resfinder_cov: 0.6
+fargene_hmm: "class_A"    # HMM model for fARGene
+
+# QC thresholds
+min_genome_size: 1000000   # 1 MB minimum
+min_contigs: 1
