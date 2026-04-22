@@ -1,5 +1,6 @@
 process QUAST {
     tag "$sample"
+    conda "bioconda::quast=5.2.0"
     publishDir "${params.outdir}/qc/${sample}", mode: 'copy'
 
     input:

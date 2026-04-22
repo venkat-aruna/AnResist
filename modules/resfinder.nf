@@ -1,5 +1,6 @@
 process RUN_RESFINDER {
     tag "$sample"
+    conda "bioconda::resfinder"
     publishDir "${params.outdir}/resfinder/${sample}", mode: 'copy'
 
     input:

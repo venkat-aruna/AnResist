@@ -1,5 +1,6 @@
 process RUN_RGI {
     tag "$sample"
+    conda "bioconda::rgi=6.0.3"
     publishDir "${params.outdir}/rgi/${sample}", mode: 'copy'
 
     input:

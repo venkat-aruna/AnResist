@@ -1,7 +1,8 @@
 // modules/compare.nf
 process COMPARE {
+    conda "$projectDir/environment.yml"
     publishDir "${params.outdir}/comparison", mode: 'copy'
-
+    
     input:
     path(unified_files)
 

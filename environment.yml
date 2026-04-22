@@ -5,15 +5,6 @@ channels:
   - defaults
 dependencies:
   - python=3.11
-  - nextflow>=23.10
-  - ncbi-amrfinderplus>=3.12
-  - rgi>=6.0
-  - abricate>=1.0
-  - resfinder>=4.0
-  - staramr>=0.8
-  - fargene>=0.1
-  - quast>=5.2
-  - ncbi-datasets-cli
   - pandas>=2.0
   - matplotlib>=3.7
   - seaborn>=0.12

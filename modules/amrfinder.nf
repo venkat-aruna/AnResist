@@ -1,5 +1,6 @@
 process RUN_AMRFINDER {
     tag "$sample"
+    conda "bioconda::ncbi-amrfinderplus"
     publishDir "${params.outdir}/amrfinder/${sample}", mode: 'copy'
 
     input:

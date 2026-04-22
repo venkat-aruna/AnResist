@@ -5,12 +5,12 @@ samplesheet: "config/samplesheet.csv"
 outdir: "results"
 
 # Tool toggles — set false to skip a tool
-run_amrfinder: true
-run_rgi: true
-run_abricate: true
-run_resfinder: true
-run_staramr: true
-run_fargene: true
+run_amrfinder: false
+run_rgi: false
+run_abricate: false
+run_resfinder: false
+run_staramr: false
+run_fargene: false
 
 # Tool thresholds
 amrfinder_ident: 90

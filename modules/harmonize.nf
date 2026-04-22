@@ -1,6 +1,7 @@
 // modules/harmonize.nf
 process HARMONIZE {
     tag "$sample"
+    conda "$projectDir/environment.yml"
     publishDir "${params.outdir}/harmonized", mode: 'copy'
 
     input:

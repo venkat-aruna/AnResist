@@ -1,5 +1,6 @@
 process RUN_FARGENE {
     tag "$sample"
+    conda "bioconda::fargene"
     publishDir "${params.outdir}/fargene/${sample}", mode: 'copy'
 
     input:

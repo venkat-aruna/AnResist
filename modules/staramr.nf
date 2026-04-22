@@ -1,5 +1,6 @@
 process RUN_STARAMR {
     tag "$sample"
+    conda "bioconda::staramr"
     publishDir "${params.outdir}/staramr/${sample}", mode: 'copy'
 
     input:
