@@ -1,0 +1,11 @@
+sample,fasta
+M_tuberculosis,data/test/fastas/M_tuberculosis.fasta
+B_subtilis,data/test/fastas/B_subtilis.fasta
+S_aureus_MRSA,data/test/fastas/S_aureus_MRSA.fasta
+K_pneumoniae,data/test/fastas/K_pneumoniae.fasta
+P_aeruginosa,data/test/fastas/P_aeruginosa.fasta
+A_baumannii,data/test/fastas/A_baumannii.fasta
+E_faecium,data/test/fastas/E_faecium.fasta
+S_enterica,data/test/fastas/S_enterica.fasta
+N_gonorrhoeae,data/test/fastas/N_gonorrhoeae.fasta
+C_difficile,data/test/fastas/C_difficile.fasta
