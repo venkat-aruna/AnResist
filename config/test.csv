@@ -1,0 +1,4 @@
+sample,fasta
+S_aureus_MRSA,data/test/fastas/S_aureus_MRSA.fasta
+K_pneumoniae,data/test/fastas/K_pneumoniae.fasta
+N_gonorrhoeae,data/test/fastas/N_gonorrhoeae.fasta
