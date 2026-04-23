@@ -6,8 +6,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Conda](https://img.shields.io/badge/conda-mamba-green)](https://mamba.readthedocs.io/)
 
----
-
 ## Table of Contents
 
 1. [Overview](#overview)
@@ -22,28 +20,22 @@
 10. [Output Structure](#output-structure)
 11. [Test Dataset](#test-dataset)
 12. [Reproducibility](#reproducibility)
-13. [Troubleshooting](#troubleshooting)
-14. [Contact](#contact)
-
----
+13. [Contact](#contact)
 
 ## Overview
 
-AnResist runs four established AMR detection tools — **AMRFinderPlus**, **RGI (CARD)**, **ABRicate**, and **ResFinder** — simultaneously on a panel of bacterial genome assemblies. It then harmonizes their outputs into a unified schema and performs systematic cross-tool comparison, highlighting genes where tools agree (high confidence) and where they disagree (requiring attention).
+AnResist runs four established AMR detection tools — **AMRFinderPlus**, **RGI (CARD)**, **ABRicate**, and **ResFinder** — simultaneously on a panel of bacterial genome assemblies. It then harmonizes their outputs into a unified schema and performs systematic cross-tool comparison, highlighting genes where tools agree (high confidence) and where they disagree (requiring attention) with clear visual interpretations.
 
 The key novelty of AnResist is not running the tools — it is **quantifying and explaining the disagreement** between them, producing per-sample and global figures and tables that make tool discordance actionable for clinical and research settings.
-
----
 
 ## Biological Motivation
 
 AMR is one of the greatest threats to global public health. While multiple bioinformatics tools exist for detecting resistance genes from genome assemblies, they use different databases (NCBI NDARO, CARD, ResFinder DB) and different detection algorithms. This means the same genome can yield different resistance profiles depending on which tool is used.
 
-AnResist addresses the question: **which AMR genes are robustly detected across tools, and which are tool-specific — and what does that mean biologically?**
+AnResist addresses the question: **which AMR genes are robustly detected across tools, and which are tool-specific?How can we interpret it?**
 
 A gene detected by all four tools is high-confidence. A gene detected by only one tool may represent a novel variant, a database gap, or a false positive — all of which have clinical implications.
 
----
 
 ## Pipeline Architecture
 
@@ -72,16 +64,16 @@ Raw FASTA assemblies
                                       04. COMPARE
                                       (cross-tool analysis +
                                        publication figures)
-```
 
----
+```
 
 ## Tools Included
 
 | Tool | Database | Version | Purpose |
 |------|----------|---------|---------|
-| AMRFinderPlus | NCBI NDARO | latest | Nucleotide + protein AMR detection |
-| RGI | CARD | 6.0.3 | Homology + SNP-based AMR prediction |
+|Quast|-|5.2.0|Filter sequences|
+| AMRFinderPlus | NCBI NDARO | 2026-03-24.1 | Nucleotide + protein AMR detection |
+| RGI | CARD | latest | Homology + SNP-based AMR prediction |
 | ABRicate | NCBI | 1.0.1 | Fast sequence-based screening |
 | ResFinder | ResFinder DB | latest | Acquired resistance gene detection |
 
@@ -91,7 +83,7 @@ Raw FASTA assemblies
 
 - Linux or macOS (tested on Ubuntu 22.04, WSL2)
 - [Nextflow](https://www.nextflow.io/) ≥ 22.10.0
-- [Conda](https://docs.conda.io/) + [Mamba](https://mamba.readthedocs.io/) (recommended) or Docker
+- [Conda](https://docs.conda.io/) + [Mamba](https://mamba.readthedocs.io/) (recommended) 
 - Git
 - Internet access for first run (database downloads)
 
@@ -99,38 +91,25 @@ Raw FASTA assemblies
 
 **Memory:** Minimum 8 GB RAM recommended.
 
----
+> [!WARNING]
+> Install AnResist in your home directory (e.g. `~/AnResist`). Nextflow writes temporary files and conda environments to paths relative to the working directory — installing in system directories or network mounts will cause permission errors.
+> 
+> Install Nextflow inside a conda environment, not system-wide:
+> ```bash
+> conda create -n nextflow -c bioconda nextflow
+> conda activate nextflow
+> ```
+> Always activate this environment before running the pipeline.
+
 
 ## Installation
 
-### 1. Clone the repository
+Clone the repository
 
 ```bash
 git clone https://github.com/<your-username>/AnResist.git
 cd AnResist
 ```
-
-### 2. Install Nextflow
-
-```bash
-curl -s https://get.nextflow.io | bash
-sudo mv nextflow /usr/local/bin/
-```
-
-### 3. Install Mamba (recommended)
-
-```bash
-conda install -n base -c conda-forge mamba
-```
-
-### 4. Verify installation
-
-```bash
-nextflow -version
-mamba --version
-```
-
----
 
 ## Quick Start
 
@@ -158,17 +137,9 @@ nextflow run main.nf \
     -resume
 ```
 
-### Run with Docker (no conda required)
-
-```bash
-nextflow run main.nf \
-    -params-file config/params.yml \
-    -profile docker
-```
-
----
-
 ## Input Format
+
+###To run with your own assembled fasta contigs-
 
 AnResist requires a **samplesheet CSV** with two columns:
 
@@ -180,7 +151,7 @@ E_faecium,data/E_faecium.fasta
 ```
 
 - `sample` — unique identifier for the sample (no spaces)
-- `fasta` — path to the genome assembly FASTA file (relative or absolute)
+- `fasta` — path to the genome assembly FASTA file (relative )
 
 FASTA files should be assembled genome sequences (contigs or complete chromosomes). Raw reads are not supported.
 
@@ -190,51 +161,9 @@ Set the samplesheet path in `config/params.yml`:
 samplesheet: "config/samplesheet.csv"
 ```
 
----
-
 ## Configuration
 
 All parameters are set in `config/params.yml`:
-
-```yaml
-# Input / Output
-samplesheet: "config/samplesheet.csv"
-outdir: "results"
-
-# Tool toggles — set false to skip
-run_amrfinder: true
-run_rgi: true
-run_abricate: true
-run_resfinder: true
-
-# AMRFinder thresholds
-amrfinder_ident: 0.9
-amrfinder_cov: 0.5
-
-# RGI settings
-rgi_loose: false        # true = include loose hits
-
-# ABRicate settings
-abricate_db: "ncbi"     # ncbi, card, resfinder, argannot, megares
-abricate_minid: 80
-abricate_mincov: 80
-
-# ResFinder thresholds
-resfinder_threshold: 0.9
-resfinder_cov: 0.6
-
-# QC thresholds
-min_genome_size: 1000000   # 1 MB minimum
-```
-
-### Compute profiles
-
-| Profile | Description |
-|---------|-------------|
-| `conda` | Per-process conda environments via mamba (recommended) |
-| `docker` | Docker containers |
-
----
 
 ## Output Structure
 
@@ -283,8 +212,6 @@ results/
 
 **`global_jaccard_heatmap.png`** — shows pairwise Jaccard similarity between all four tools across all samples. Lower values = more disagreement = more interesting biology.
 
----
-
 ## Test Dataset
 
 A minimal test dataset is included in `test/` covering three clinically relevant organisms:
@@ -295,19 +222,9 @@ A minimal test dataset is included in `test/` covering three clinically relevant
 | K. pneumoniae | NC_009648.1 | Beta-lactam, aminoglycoside |
 | N. gonorrhoeae | NC_011035.1 | Fluoroquinolone, beta-lactam |
 
-Run the test dataset:
-
-```bash
-nextflow run main.nf \
-    -params-file test/params_test.yml \
-    -profile conda
-```
-
 Expected outputs: 3 sample folders in `results/comparison/`, minimum 5 genes detected per sample, `global_jaccard_heatmap.png` showing similarity scores between 0.3 and 0.8.
 
 Expected runtime: ~15 minutes on first run (database downloads), ~5 minutes on resume.
-
----
 
 ## Reproducibility
 
@@ -322,95 +239,22 @@ AnResist is designed for full reproducibility:
 | Portability | Runs identically on laptop, HPC, or cloud |
 | Version control | Full git history with incremental commits |
 
-### Pinning database versions
-
-For fully reproducible results, pin database versions in `nextflow.config`:
-
-```groovy
-params {
-    amrfinder_db_version = "2026-03-24.1"
-    card_db_version      = "3.2.9"
-    resfinder_db_commit  = "abc1234"
-}
-```
-
----
-
-## Troubleshooting
-
-### Pipeline fails at database setup
-
-AMRFinder, RGI, and ResFinder databases are downloaded on first run. If this fails:
-
-```bash
-# Check internet connectivity
-curl -I https://card.mcmaster.ca/latest/data
-
-# Re-run — storeDir will skip completed downloads
-nextflow run main.nf -params-file config/params.yml -profile conda -resume
-```
-
-### StarAMR / FarGene errors
-
-These tools are intentionally excluded from AnResist due to incompatibility with current NumPy and Python versions. Set `run_staramr: false` and `run_fargene: false` in params (default).
-
-### COMPARE step fails
-
-If the comparison step fails after updating Python scripts, clear the cached work directory:
-
-```bash
-nextflow log | head -2
-nextflow log <run_name> -f name,workdir | grep COMPARE | awk '{print $2}' | xargs rm -rf
-nextflow run main.nf -params-file config/params.yml -profile conda -resume
-```
-
-### Out of memory
-
-Increase memory in `nextflow.config`:
-
-```groovy
-process {
-    memory = '8 GB'
-    withName: 'RUN_RGI' {
-        memory = '16 GB'
-    }
-}
-```
-
-### Conda environment build fails
-
-```bash
-# Update mamba
-conda update -n base mamba
-
-# Clear conda cache
-conda clean --all
-
-# Re-run
-nextflow run main.nf -params-file config/params.yml -profile conda -resume
-```
-
----
-
 ## Contact
 
 **Aruna** — M.S. Bioinformatics, Georgia Institute of Technology  
-GitHub Issues: [github.com/\<your-username\>/AnResist/issues](https://github.com)
+GitHub Issues: [github.com/aruna-venkat/AnResist/issues](https://github.com)
 
 For bug reports please include:
 - Your operating system and Nextflow version (`nextflow -version`)
 - The `.nextflow.log` file
 - The full error message from the failed process work directory (`.command.err`)
 
----
-
 ## Citation
 
 If you use AnResist in your research, please cite:
 
-> AnResist: A reproducible Nextflow pipeline for cross-tool AMR gene detection and systematic comparison. [Year]. GitHub: https://github.com/\<your-username\>/AnResist
+> AnResist: A reproducible Nextflow pipeline for cross-tool AMR gene detection and systematic comparison. [2026]. GitHub: https://github.com/aruna-venkat/AnResist
 
----
 
 ## License
 
