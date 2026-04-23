@@ -5,6 +5,7 @@ process RUN_AMRFINDER {
 
     input:
     tuple val(sample), path(fasta)
+    path amrfinder_db  // This is the new input dependency
 
     output:
     tuple val(sample), path("${sample}_amrfinder.tsv")
@@ -13,9 +14,10 @@ process RUN_AMRFINDER {
     """
     amrfinder \
         --nucleotide ${fasta} \
+        --database ${amrfinder_db} \
         --output ${sample}_amrfinder.tsv \
-        --ident-min ${params.amrfinder_ident ?: 90} \
-        --coverage-min ${params.amrfinder_cov ?: 50} \
+        --ident_min ${params.amrfinder_ident} \
+        --coverage_min ${params.amrfinder_cov} \
         --threads 4
     """
 }

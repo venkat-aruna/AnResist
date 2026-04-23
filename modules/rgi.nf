@@ -5,6 +5,7 @@ process RUN_RGI {
 
     input:
     tuple val(sample), path(fasta)
+    path card_json
 
     output:
     tuple val(sample), path("${sample}_rgi.txt")
@@ -12,14 +13,14 @@ process RUN_RGI {
     script:
     def loose = params.rgi_loose ? "--include_loose" : ""
     """
+    rgi load -i ${card_json} --local
     rgi main \
         --input_sequence ${fasta} \
         --output_file ${sample}_rgi \
         --input_type contig \
         --num_threads 4 \
         --clean \
+        --local \
         ${loose}
-
-    mv ${sample}_rgi.txt ${sample}_rgi.txt
     """
 }

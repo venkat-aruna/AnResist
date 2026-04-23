@@ -5,6 +5,7 @@ process RUN_RESFINDER {
 
     input:
     tuple val(sample), path(fasta)
+    path db
 
     output:
     tuple val(sample), path("${sample}_resfinder.tsv")
@@ -15,6 +16,7 @@ process RUN_RESFINDER {
         --inputfasta ${fasta} \
         --outputPath resfinder_out \
         --acquired \
+        --db_path_res ${db} \
         --threshold ${params.resfinder_threshold ?: 0.9} \
         --min_cov ${params.resfinder_cov ?: 0.6}
 

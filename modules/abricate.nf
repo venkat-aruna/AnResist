@@ -1,6 +1,6 @@
 process RUN_ABRICATE {
     tag "$sample"
-    conda "bioconda::abricate=1.0.1"
+    conda "bioconda::abricate=1.0.1 conda-forge::perl"
     publishDir "${params.outdir}/abricate/${sample}", mode: 'copy'
 
     input:
