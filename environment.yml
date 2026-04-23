@@ -10,3 +10,5 @@ dependencies:
   - seaborn>=0.12
   - upsetplot>=0.8
   - pytest>=7.4
+  - matplotlib-venn>=0.11
+  - upsetplot=0.8.0
