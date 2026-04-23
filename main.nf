@@ -1,47 +1,72 @@
 nextflow.enable.dsl=2
 
 include { QUAST }         from './modules/qc'
+include { FILTER_SAMPLES } from './modules/filter.nf'
+include { AMRFINDER_SETUP } from './modules/amrfinder_setup.nf'
 include { RUN_AMRFINDER } from './modules/amrfinder'
 include { RUN_RGI }       from './modules/rgi'
 include { RUN_ABRICATE }  from './modules/abricate'
 include { RUN_RESFINDER } from './modules/resfinder'
-include { RUN_STARAMR }   from './modules/staramr'
-include { RUN_FARGENE }   from './modules/fargene'
 include { HARMONIZE }     from './modules/harmonize'
 include { COMPARE }       from './modules/compare'
+include { RESFINDER_SETUP } from './modules/resfinder_setup.nf'
+include { RGI_SETUP }       from './modules/rgi_setup.nf'
 
 workflow {
-
-    Channel
+    // 1. Inputs
+    samples_ch = Channel
         .fromPath(params.samplesheet)
         .splitCsv(header: true)
         .map { row -> tuple(row.sample, file(row.fasta)) }
-        .set { samples }
 
-    QUAST(samples)
+    // 2. Pre-run Setup
+    QUAST(samples_ch)
 
-    // run all tools unconditionally — use params to filter inputs instead
-    if (params.run_amrfinder) { RUN_AMRFINDER(samples) }
-    if (params.run_rgi)       { RUN_RGI(samples) }
-    if (params.run_abricate)  { RUN_ABRICATE(samples) }
-    if (params.run_resfinder) { RUN_RESFINDER(samples) }
-    if (params.run_staramr)   { RUN_STARAMR(samples) }
-    if (params.run_fargene)   { RUN_FARGENE(samples) }
+    QUAST.out.join(samples_ch).set { to_filter_ch }
 
-    // collect outputs — use ifEmpty to handle disabled tools gracefully
-    amrfinder_out = params.run_amrfinder ? RUN_AMRFINDER.out : Channel.empty()
-    rgi_out       = params.run_rgi       ? RUN_RGI.out       : Channel.empty()
-    abricate_out  = params.run_abricate  ? RUN_ABRICATE.out  : Channel.empty()
-    resfinder_out = params.run_resfinder ? RUN_RESFINDER.out : Channel.empty()
-    staramr_out   = params.run_staramr   ? RUN_STARAMR.out   : Channel.empty()
-    fargene_out   = params.run_fargene   ? RUN_FARGENE.out   : Channel.empty()
+    // 4. Run the Filter
+    FILTER_SAMPLES(to_filter_ch)
 
-    // mix all outputs and group by sample name
-    amrfinder_out
-        .mix(rgi_out, abricate_out, resfinder_out, staramr_out, fargene_out)
-        .groupTuple()
-        .set { all_tool_outputs }
+    passed_samples = FILTER_SAMPLES.out.passed
 
-    HARMONIZE(all_tool_outputs)
-    COMPARE(HARMONIZE.out.collect())
+    db_ch = AMRFINDER_SETUP()
+    resfinder_db_ch = RESFINDER_SETUP()
+    card_db_ch     = RGI_SETUP()
+    
+    // 3. Tool Execution with explicit output handling
+    // We use 'if' inside the workflow to create the channels
+    
+    ch_to_mix = []
+    if (params.run_amrfinder) { 
+        RUN_AMRFINDER(passed_samples, db_ch.db_files)
+        ch_to_mix << RUN_AMRFINDER.out
+    }
+    if (params.run_rgi) {
+        RUN_RGI(passed_samples, card_db_ch.db_files)
+        ch_to_mix << RUN_RGI.out
+    }
+    if (params.run_abricate) { 
+        RUN_ABRICATE(passed_samples)
+        ch_to_mix << RUN_ABRICATE.out
+    }
+    if (params.run_resfinder) {
+        RUN_RESFINDER(passed_samples, resfinder_db_ch.db_files)
+        ch_to_mix << RUN_RESFINDER.out
+    }
+
+    // 4. Mixing Logic
+    // This takes the list of active channels and groups them
+    if (ch_to_mix.size() > 0) {
+        ch_to_mix[0]
+            .mix( *ch_to_mix.drop(1) )
+            .groupTuple()
+            .set { grouped_outputs }
+
+        HARMONIZE(grouped_outputs)
+        
+        // 5. Final Comparison
+        COMPARE(HARMONIZE.out.collect())
+    } else {
+        log.info "No AMR tools selected. Skipping harmonization."
+    }
 }
