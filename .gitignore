@@ -1,0 +1,6 @@
+work/*
+*.log
+.nextflow/*
+results/*
+.nextflow*
+temp.txt
