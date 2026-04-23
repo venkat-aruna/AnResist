@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/logo.png" alt="AnResist logo" width="200"/>
+</p>
+
 # AnResist 🧬
 
 > **A reproducible Nextflow DSL2 pipeline for cross-tool antimicrobial resistance (AMR) gene detection and systematic comparison across multiple bacterial genomes.**
