@@ -4,6 +4,11 @@
 samplesheet: "config/test.csv"
 outdir: "results"
 
+#QC / Assembly filtering thresholds
+min_genome_size: 1000000
+max_contigs: 500
+min_n50: 10000
+
 # Tool toggles — set false to skip a tool
 run_amrfinder: true
 run_rgi: true
