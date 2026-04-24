@@ -246,7 +246,7 @@ AnResist is designed for full reproducibility:
 ## Contact
 
 **Aruna** — M.S. Bioinformatics, Georgia Institute of Technology  
-GitHub Issues: [github.com/aruna-venkat/AnResist/issues](https://github.com)
+GitHub Issues: [github.com/aruna-venkat/AnResist/issues](https://github.com/venkat-aruna/AnResist/issues)
 
 For bug reports please include:
 - Your operating system and Nextflow version (`nextflow -version`)
@@ -257,7 +257,7 @@ For bug reports please include:
 
 If you use AnResist in your research, please cite:
 
-> AnResist: A reproducible Nextflow pipeline for cross-tool AMR gene detection and systematic comparison. [2026]. GitHub: https://github.com/aruna-venkat/AnResist
+> AnResist: A reproducible Nextflow pipeline for cross-tool AMR gene detection and systematic comparison. [2026]. GitHub: [https://github.com/aruna-venkat/AnResist](https://github.com/venkat-aruna/AnResist)
 
 
 ## License
