@@ -111,7 +111,7 @@ Raw FASTA assemblies
 Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/AnResist.git
+git clone https://github.com/aruna-venkat/AnResist.git
 cd AnResist
 ```
 
