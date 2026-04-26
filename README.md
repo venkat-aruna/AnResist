@@ -111,7 +111,8 @@ Raw FASTA assemblies
 Clone the repository
 
 ```bash
-git clone https://github.com/aruna-venkat/AnResist.git
+git init #if there is no git repo
+git clone [https://github.com/aruna-venkat/AnResist.git](https://github.com/venkat-aruna/AnResist.git)
 cd AnResist
 ```
 
