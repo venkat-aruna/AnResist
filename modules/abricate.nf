@@ -4,10 +4,10 @@ process RUN_ABRICATE {
     publishDir "${params.outdir}/abricate/${sample}", mode: 'copy'
 
     input:
-    tuple val(sample), path(fasta)
+    tuple val(sample), path(fasta) //sample name, fasta path
 
     output:
-    tuple val(sample), path("${sample}_abricate.tsv")
+    tuple val(sample), path("${sample}_abricate.tsv") // sample name, abricate.tsv
 
     script:
     """

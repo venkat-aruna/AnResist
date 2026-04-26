@@ -1,4 +1,4 @@
-process AMRFINDER_SETUP {
+process AMRFINDER_SETUP { //setup amrfinder db 
     conda "bioconda::ncbi-amrfinderplus"
     storeDir "${params.outdir}/amrfinder_db"
 
