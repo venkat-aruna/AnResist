@@ -56,7 +56,6 @@ def parse_resfinder(path, sample):
     positions = df["Position in contig"].str.extract(r"(\d+)\.\.(\d+)")
     identity = df["Identity"].astype(str).str.replace("%", "", regex=False)
 
-    # coverage is "aligned/total" e.g. "756/756" — convert to percentage
     def cov_to_pct(val):
         try:
             parts = str(val).split("/")

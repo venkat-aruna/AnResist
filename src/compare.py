@@ -12,7 +12,8 @@ import seaborn as sns
 from itertools import combinations
 from upsetplot import UpSet, from_memberships
 
-# ── Publication style ─────────────────────────────────────────────────────────
+
+#visual metrics
 plt.rcParams.update({
     "font.family":       "DejaVu Sans",
     "font.size":         11,
@@ -30,17 +31,16 @@ plt.rcParams.update({
     "savefig.bbox":      "tight",
     "savefig.facecolor": "white",
 })
-
-# Colorblind-safe palette (Wong 2011)
 TOOL_PALETTE = [
     "#0072B2", "#E69F00", "#009E73", "#CC79A7",
     "#56B4E9", "#D55E00", "#F0E442", "#000000",
 ]
 
 
-# ── Utilities ─────────────────────────────────────────────────────────────────
+#Custom functions
 
 def jaccard(a, b):
+    """Jaccard coefficient calculation"""
     if not a and not b:
         return np.nan
     u = len(a | b)
@@ -48,6 +48,7 @@ def jaccard(a, b):
 
 
 def get_tool_colors(tools):
+    '''Function returns tool colours'''
     return {t: TOOL_PALETTE[i % len(TOOL_PALETTE)] for i, t in enumerate(sorted(tools))}
 
 
@@ -98,16 +99,13 @@ def explain_discordance(gene, data, sample, tools):
 
     return explanation
 
-# ── Per-sample tables ─────────────────────────────────────────────────────────
 
 def write_sample_tables(data, sample, tools, out_dir):
     sd = data[data["sample"] == sample].copy()
     tc = get_tool_colors(tools)
 
-    # ── 1. All hits — no data loss
     sd.to_csv(f"{out_dir}/{sample}_all_hits.tsv", sep="\t", index=False)
 
-    # ── 2. Gene-level detection summary with confidence and explanation
     records = []
     for gene, gdf in sd.groupby("gene"):
         detecting = sorted(gdf["tool"].unique())
@@ -226,8 +224,6 @@ def write_discordance_report(summary, sample, tools, out_dir):
     with open(f"{out_dir}/{sample}_discordance_report.txt", "w") as f:
         f.write("\n".join(lines))
 
-
-# ── Per-sample figures ────────────────────────────────────────────────────────
 
 def fig_upset_with_genes(gene_sets, summary, sample, tools, out_dir):
     """
@@ -480,7 +476,6 @@ def fig_identity_scatter(data, summary, sample, tools, out_dir):
 
     fig.savefig(f"{out_dir}/{sample}_identity_scatter_shared_genes.png")
     plt.close(fig)
-# ── Global figures ────────────────────────────────────────────────────────────
 
 def fig_global_jaccard(all_data, tools, out_dir):
     gene_sets = {
@@ -631,7 +626,6 @@ def write_global_tables(all_data, tools, samples, out_dir):
     return global_summary
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
     parser = argparse.ArgumentParser()
@@ -664,7 +658,6 @@ def main():
     print(f"Tools:   {', '.join(tools)}")
     print(f"Samples: {', '.join(samples)}\n")
 
-    # ── Per-sample ────────────────────────────────────────────────────
     for sample in samples:
         sample_dir = os.path.join(args.output_dir, sample)
         fig_dir    = os.path.join(sample_dir, "figures")
@@ -680,7 +673,6 @@ def main():
         fig_drug_class_discordance(all_data, summary, sample, tools, fig_dir)
         fig_identity_scatter(all_data, summary, sample, tools, fig_dir)
 
-    # ── Global ────────────────────────────────────────────────────────
     global_dir = os.path.join(args.output_dir, "global")
     global_fig = os.path.join(global_dir, "figures")
     os.makedirs(global_fig, exist_ok=True)
