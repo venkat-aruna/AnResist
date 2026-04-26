@@ -112,7 +112,7 @@ Clone the repository
 
 ```bash
 git init #if there is no git repo
-git clone [https://github.com/aruna-venkat/AnResist.git](https://github.com/venkat-aruna/AnResist.git)
+git clone https://github.com/aruna-venkat/AnResist.git
 cd AnResist
 ```
 
