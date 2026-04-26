@@ -143,7 +143,7 @@ nextflow run main.nf \
 
 ## Input Format
 
-###To run with your own assembled fasta contigs-
+### To run with your own assembled fasta contigs-
 
 AnResist requires a **samplesheet CSV** with two columns:
 

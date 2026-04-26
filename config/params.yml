@@ -1,13 +1,15 @@
 # config/params.yml
+# users can change parameters according to their problem
 
 # Input
 samplesheet: "config/test.csv"
 outdir: "results"
 
-#QC / Assembly filtering thresholds
+#Quast parameters
 min_genome_size: 1000000
 max_contigs: 500
 min_n50: 10000
+min_contigs: 1
 
 # Tool toggles — set false to skip a tool
 run_amrfinder: true
@@ -15,16 +17,19 @@ run_rgi: true
 run_abricate: true
 run_resfinder: true
 
-# Tool thresholds
+# amr options
 amrfinder_ident: 0.9
 amrfinder_cov: 0.5
-rgi_loose: false          # true = include loose hits
-abricate_db: "ncbi"       # ncbi, card, resfinder, argannot, megares
+
+#rgi options
+rgi_loose: false
+
+#abricate options
+abricate_db: "ncbi"      
 abricate_minid: 80
 abricate_mincov: 80
+
+#resfinder options
 resfinder_threshold: 0.9
 resfinder_cov: 0.6
 
-# QC thresholds
-min_genome_size: 1000000   # 1 MB minimum
-min_contigs: 1
