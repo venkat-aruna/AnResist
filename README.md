@@ -116,6 +116,8 @@ git clone https://github.com/venkat-aruna/AnResist.git
 cd AnResist
 ```
 
+If you don't have git, download the repo as zip file and unzip!
+
 ## Quick Start
 
 ### Run with test data
@@ -168,7 +170,41 @@ samplesheet: "config/samplesheet.csv"
 
 ## Configuration
 
-All parameters are set in `config/params.yml`:
+All parameters are set in `config/params.yml`: Parameters are customizable
+
+```bash
+samplesheet: "config/test.csv" #input csv
+outdir: "results" #output directory
+
+#Quast parameters
+min_genome_size: 1000000
+max_contigs: 500
+min_n50: 10000
+min_contigs: 1
+
+# Tool toggles — set false to skip a tool
+run_amrfinder: true
+run_rgi: true
+run_abricate: true
+run_resfinder: true
+
+# amr options
+amrfinder_ident: 0.9 #identity
+amrfinder_cov: 0.5 #coverage
+
+#rgi options
+rgi_loose: false
+
+#abricate options
+abricate_db: "ncbi"      
+abricate_minid: 80
+abricate_mincov: 80
+
+#resfinder options
+resfinder_threshold: 0.9 #identity
+resfinder_cov: 0.6 #coverage
+
+```
 
 ## Output Structure
 
